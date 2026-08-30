@@ -15,7 +15,27 @@ def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def create_user(db: Session, user: UserCreate):
+def verify_password(
+    plain_password: str,
+    hashed_password: str
+) -> bool:
+    return pwd_context.verify(
+        plain_password,
+        hashed_password
+    )
+
+
+def get_user_by_email(
+    db: Session,
+    email: str
+):
+    return db.query(User).filter(User.email == email).first()
+
+
+def create_user(
+    db: Session,
+    user: UserCreate
+):
     hashed_password = hash_password(user.password)
 
     db_user = User(
