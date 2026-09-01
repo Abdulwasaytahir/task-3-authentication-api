@@ -12,6 +12,7 @@ pwd_context = CryptContext(
 
 
 def hash_password(password: str) -> str:
+
     return pwd_context.hash(password)
 
 
@@ -19,24 +20,21 @@ def verify_password(
     plain_password: str,
     hashed_password: str
 ) -> bool:
+
     return pwd_context.verify(
         plain_password,
         hashed_password
     )
 
 
-def get_user_by_email(
-    db: Session,
-    email: str
-):
-    return db.query(User).filter(User.email == email).first()
-
-
 def create_user(
     db: Session,
     user: UserCreate
 ):
-    hashed_password = hash_password(user.password)
+
+    hashed_password = hash_password(
+        user.password
+    )
 
     db_user = User(
         name=user.name,
@@ -45,7 +43,21 @@ def create_user(
     )
 
     db.add(db_user)
+
     db.commit()
+
     db.refresh(db_user)
 
     return db_user
+
+
+def get_user_by_email(
+    db: Session,
+    email: str
+):
+
+    return (
+        db.query(User)
+        .filter(User.email == email)
+        .first()
+    )
